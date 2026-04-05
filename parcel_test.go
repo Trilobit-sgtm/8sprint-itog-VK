@@ -46,10 +46,8 @@ func TestAddGetDelete(t *testing.T) {
 	// get
 	got, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, id, got.Number)
-	require.Equal(t, parcel.Client, got.Client)
-	require.Equal(t, parcel.Status, got.Status)
-	require.Equal(t, parcel.Address, got.Address)
+	parcel.Number = id
+	require.Equal(t, parcel, got)
 
 	// delete
 	err = store.Delete(id)
@@ -82,7 +80,9 @@ func TestSetAddress(t *testing.T) {
 	// check
 	got, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, newAddress, got.Address)
+	parcel.Number = id
+	parcel.Address = newAddress
+	require.Equal(t, parcel, got)
 }
 
 // TestSetStatus проверяет обновление статуса
@@ -107,7 +107,9 @@ func TestSetStatus(t *testing.T) {
 	// check
 	got, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, ParcelStatusSent, got.Status)
+	parcel.Number = id
+	parcel.Status = ParcelStatusSent
+	require.Equal(t, parcel, got)
 }
 
 // TestGetByClient проверяет получение посылок по идентификатору клиента
@@ -152,10 +154,7 @@ func TestGetByClient(t *testing.T) {
 
 	// check
 	for _, parcel := range storedParcels {
-		expected, ok := parcelMap[parcel.Number]
-		require.True(t, ok)
-		require.Equal(t, expected.Client, parcel.Client)
-		require.Equal(t, expected.Status, parcel.Status)
-		require.Equal(t, expected.Address, parcel.Address)
+		expected := parcelMap[parcel.Number]
+		require.Equal(t, expected, parcel)
 	}
 }
